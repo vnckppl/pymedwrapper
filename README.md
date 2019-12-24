@@ -38,7 +38,7 @@ optional arguments:
 ```
 
 **Examples**
-``` sh
+```shell
 ./pubmed.py \
     ~/Desktop/myPyMedWrapperTestOutput.xlsx \
     --tool "myCLIpubmedQuery" \
