@@ -9,7 +9,7 @@ It allows quick batch searching Pubmed and storing results in an Excel sheet.
 pip install -r requirements.txt 
 
 **Usage**
-`positional arguments:
+```positional arguments:
   oFile                 Output file name. Path must exist.
 
 optional arguments:
@@ -29,14 +29,15 @@ optional arguments:
                         Only results that have been published since the last
                         <x> years (default=not set). This takes precedence
                         over --pubSinceYear.
-`
+```
+
 **Examples**
-`./pubmed.py \
+```./pubmed.py \
     ~/Desktop/myPyMedWrapperTestOutput.xlsx \
     --tool "myCLIpubmedQuery" \
     --email "my.email@address.com" \
     --terms Alzheimer brain MRI cerebellum \
     --maxResults 200 \
     --pubSinceYear 2010
-`
+```
 
