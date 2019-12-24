@@ -9,7 +9,8 @@ It allows quick batch searching Pubmed and storing results in an Excel sheet.
 pip install -r requirements.txt 
 
 **Usage**
-```usage: pubmed.py [-h] --tool TOOL --email EMAIL [--terms TERMS [TERMS ...]]
+```
+usage: pubmed.py [-h] --tool TOOL --email EMAIL [--terms TERMS [TERMS ...]]
                  [--maxResults MAXRESULTS] [--pubSinceYear PUBSINCEYEAR]
                  [--pubSinceLast PUBSINCELAST]
                  oFile
@@ -37,7 +38,8 @@ optional arguments:
 ```
 
 **Examples**
-```./pubmed.py \
+```
+./pubmed.py \
     ~/Desktop/myPyMedWrapperTestOutput.xlsx \
     --tool "myCLIpubmedQuery" \
     --email "my.email@address.com" \
