@@ -9,7 +9,12 @@ It allows quick batch searching Pubmed and storing results in an Excel sheet.
 pip install -r requirements.txt 
 
 **Usage**
-```positional arguments:
+```usage: pubmed.py [-h] --tool TOOL --email EMAIL [--terms TERMS [TERMS ...]]
+                 [--maxResults MAXRESULTS] [--pubSinceYear PUBSINCEYEAR]
+                 [--pubSinceLast PUBSINCELAST]
+                 oFile
+
+positional arguments:
   oFile                 Output file name. Path must exist.
 
 optional arguments:
