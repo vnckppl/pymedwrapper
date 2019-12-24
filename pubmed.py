@@ -66,8 +66,8 @@ class query(object):
         self.maxResults = args.maxResults
         self.psYear = args.pubSinceYear
         self.psLast = args.pubSinceLast
-        self.email = args.yourEmail
-        self.tool = args.projectName
+        self.email = args.email
+        self.tool = args.tool
                         
     # * Build Object
     # Create a PubMed object that GraphQL can use to query
