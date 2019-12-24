@@ -22,6 +22,14 @@ if __name__ == "__main__":
         description='This script takes in a list of search terms '
         'for Pubmed and then uses the pymed library to connect '
         'to the Pubmed API to obtain search results.')
+    parser.add_argument('tool',
+                        help='Your project name. This information is passed onto the Pubmed API.',
+                        required=True
+    )
+    parser.add_argument('email',
+                        help='Your email address. This information is passed onto the Pubmed API.',
+                        required=True
+    )
     parser.add_argument('oFile',
                         help='Output file name. Path must exist.'
     )
@@ -48,21 +56,23 @@ args = parser.parse_args()
 # * Class for Synonyms
 class query(object):
 
-    # * Store Terms
+    # * Store Flags
     def __init__(self):
         self.oFile = args.oFile
         self.terms = args.terms
         self.maxResults = args.maxResults
         self.psYear = args.pubSinceYear
         self.psLast = args.pubSinceLast
-        
+        self.email = args.yourEmail
+        self.tool = args.projectName
+                        
     # * Build Object
     # Create a PubMed object that GraphQL can use to query
     def buildQuery(self):
         # Build Object and send some info to PubMed by their request
         # Note that the parameters below are not required but kindly requested by PubMed Central
         # https://www.ncbi.nlm.nih.gov/pmc/tools/developers/
-        self.pubmed = PubMed(tool="", email="")
+        self.pubmed = PubMed(tool=self.tool, email=self.email)
 
         # Create a GraphQL query in plain text
         # Example: query:
