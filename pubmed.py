@@ -22,17 +22,20 @@ if __name__ == "__main__":
         description='This script takes in a list of search terms '
         'for Pubmed and then uses the pymed library to connect '
         'to the Pubmed API to obtain search results.')
-    parser.add_argument('tool',
-                        help='Your project name. This information is passed onto the Pubmed API.',
-                        required=True
-    )
-    parser.add_argument('email',
-                        help='Your email address. This information is passed onto the Pubmed API.',
-                        required=True
-    )
+    # Positional arguments
     parser.add_argument('oFile',
                         help='Output file name. Path must exist.'
     )
+    # Flags for information requested by Pubmed API
+    parser.add_argument('--tool',
+                        help='Your project name. This information is passed onto the Pubmed API.',
+                        required=True
+    )
+    parser.add_argument('--email',
+                        help='Your email address. This information is passed onto the Pubmed API.',
+                        required=True
+    )
+    # All other flags used to build the query
     parser.add_argument('--terms',
                         nargs='+',
                         help='List of search terms'
