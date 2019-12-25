@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # * Pubmed Queries via Python Pubmed API Wrapper
-# 2019-12-23
+# 2019-12-25
 # Vincent Koppelmans
 
 # * Background
@@ -36,16 +36,31 @@ if __name__ == "__main__":
                         required=True
     )
     # All other flags used to build the query
+    parser.add_argument('--author1',
+                        nargs='+',
+                        help='First author. Format: Last#First or Last#FirstInitials.'
+    )
+    parser.add_argument('--authors',
+                        help='Authors. Format: Last#First or Last#FirstInitials.'
+    )
+    parser.add_argument('--title',
+                        nargs='+',
+                        help='Title search words.'
+    )
     parser.add_argument('--terms',
                         nargs='+',
-                        help='List of search terms'
+                        help='List of search terms without Pubmed labels such as [auth] or [ti].'
+    )
+    parser.add_argument('--userquery',
+                        nargs='+',
+                        help='List of search terms that can include Pubmed labels such as [auth] and [ti].'
     )
     parser.add_argument('--maxResults',
                         default=50,
                         help='Maximum number of results'
     )
     parser.add_argument('--pubSinceYear',
-                        default=1980,
+                        default=str(1980),
                         help='Only results that have been published since <year>. '
                         ' Default=1980'
     )
@@ -61,14 +76,21 @@ class query(object):
 
     # * Store Flags
     def __init__(self):
+        # Positional Arguments
         self.oFile = args.oFile
-        self.terms = args.terms
-        self.maxResults = args.maxResults
-        self.psYear = args.pubSinceYear
-        self.psLast = args.pubSinceLast
+        # Flags for information requested by Pubmed API
         self.email = args.email
         self.tool = args.tool
-                        
+        # All other flags used to build the query
+        self.author1 = args.author1
+        self.authors = args.authors
+        self.title = args.title
+        self.terms = args.terms
+        self.userquery = args.userquery
+        self.psYear = args.pubSinceYear
+        self.psLast = args.pubSinceLast
+        self.maxResults = args.maxResults
+        
     # * Build Object
     # Create a PubMed object that GraphQL can use to query
     def buildQuery(self):
@@ -77,14 +99,34 @@ class query(object):
         # https://www.ncbi.nlm.nih.gov/pmc/tools/developers/
         self.pubmed = PubMed(tool=self.tool, email=self.email)
 
-        # Create a GraphQL query in plain text
-        # Example: query:
-        # '(("2018/05/01"[Date - Create] : "3000"[Date - Create])) AND (Xiaoying Xian[Author] OR diabetes)'
+        # * Create query to feed into Pubmed
         self.query = ""
-        for item in self.terms:
-            self.query=self.query+' AND '+item
+        # First author
+        if self.author1 is not None:
+            if '#' in str(self.author1):
+                self.author1 = str(self.author1).replace('#',' ')
+            self.query = self.query+str(self.author1)[2:-2]+' [1au] AND '
+        # Authors
+        if self.authors is not None:
+            for author in self.authors.split(' '):
+                if '#' in author:
+                    author = author.replace('#',' ')
+                self.query = self.query+author+' [auth] AND '
+        # Title
+        if self.title is not None:
+            for tword in self.title:
+                self.query = self.query+tword+' [ti] AND '
+        # Terms
+        if self.terms is not None:
+            for item in self.terms.split(' '):
+                self.query=self.query+item+' AND '
+        # User query
+        if self.userquery is not None:
+            userquery = str(self.userquery)[2:-2]
+            self.query=self.query+userquery+' AND '
 
-        # Calculate what the start dat is for articles to be included based on user settings
+        
+        # Calculate what the start date is for articles to be included based on user settings
         if self.psLast is not None:
             # Only include articles published in the last <x> years
             self.dYa = datetime.now() - relativedelta(years=int(self.psLast))
@@ -93,8 +135,14 @@ class query(object):
 
         else:
             self.dYaQuery = '("'+self.psYear+'/01/01"[Date - Create] : "3000"[Date - Create])'
-        self.query=self.dYaQuery + self.query
+        self.query=self.query + self.dYaQuery 
 
+        # Announce created query for verification:
+        print(f'''
+        This is your query:
+        {self.query}
+        ''')
+        
     def runQuery(self):    
         # Execute the query against the API
         self.results = self.pubmed.query(self.query, max_results=int(self.maxResults)+1)
@@ -107,7 +155,7 @@ class query(object):
         for result in self.results:
             self.nResults=self.nResults+1
 
-        # Check if there are more than 200 results
+        # Check if there are more than <n> results
         if self.nResults > int(self.maxResults):
             # Show warning
             print('More than '+str(self.maxResults)+' results found')
