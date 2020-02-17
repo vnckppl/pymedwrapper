@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # * Pubmed Queries via Python Pubmed API Wrapper
-# 2019-12-25
+# 2020-02-17
 # Vincent Koppelmans
 
 # * Background
@@ -15,6 +15,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 import xlsxwriter
+import json
 
 # * Arguments
 if __name__ == "__main__":
@@ -221,6 +222,21 @@ class query(object):
             self.worksheet.set_column('D:E', 11, self.format)
             self.worksheet.set_column('F:F', 58, self.format)
             self.writer.save()
+
+            # If there is only one result, also return information to the shell
+            if self.nResults == 1:
+                #print(json.dumps(self.output.items, indent = 4))
+                #print(self.output.items())
+                key=list(self.output.keys())[0]
+                print('\n ----------------------------------\n',
+                      'PMID:      ',self.output[key][0],'\n',
+                      'Title:     ',self.output[key][1],'\n',
+                      'Authors:   ',self.output[key][2],'\n',
+                      'Journal:   ',self.output[key][3],'\n',
+                      'Published: ',self.output[key][4],'\n',
+                      '----------------------------------\n'
+                )
+                
 
 # * Run Query
 myQuery=query()
